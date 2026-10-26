@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CloudPulse | Cost Intelligence</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"
+            defer></script>
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <a href="#overview" class="brand">
+            <span class="brand-icon">☁</span>
+            <span>
+                <strong>CloudPulse</strong>
+                <small>COST INTELLIGENCE</small>
+            </span>
+        </a>
+
+        <div class="sidebar-label">WORKSPACE</div>
+
+        <nav class="sidebar-nav">
+            <a href="#overview" class="nav-item active">
+                <span>▦</span> Overview
+            </a>
+
+            <a href="#analytics" class="nav-item">
+                <span>◫</span> Cost Analytics
+            </a>
+
+            <a href="#monthly" class="nav-item">
+                <span>▤</span> Monthly Spending
+            </a>
+
+            <a href="#daily" class="nav-item">
+                <span>◷</span> Daily Spending
+            </a>
+
+            <a href="#expenses" class="nav-item">
+                <span>⇄</span> Expense History
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="cloud-status">
+                <span class="status-dot"></span>
+                <div>
+                    <strong>System Online</strong>
+                    <small>Dashboard operational</small>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                CLOUDPULSE <span>•</span> V1.0
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN APPLICATION -->
+    <div class="main-area">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div class="breadcrumb">
+                Workspace <span>/</span> <strong>Overview</strong>
+            </div>
+
+            <div class="topbar-right">
+                <div class="environment-badge">
+                    <span class="status-dot"></span>
+                    DEMO ENVIRONMENT
+                </div>
+
+                <div class="profile-avatar">CP</div>
+            </div>
+
+        </header>
+
+
+        <main class="dashboard-content">
+
+            <!-- PAGE INTRO -->
+            <section class="page-intro" id="overview">
+
+                <div>
+                    <div class="eyebrow">CLOUD FINANCIAL OPERATIONS</div>
+
+                    <h1>Cost Overview<span class="title-dot">.</span></h1>
+
+                    <p>
+                        Monitor spending, manage budgets, and understand
+                        your cloud cost trends.
+                    </p>
+
+                    <p id="status" class="system-status">
+                        Loading dashboard data...
+                    </p>
+                </div>
+
+                <div class="intro-actions">
+                    <button class="btn-secondary"
+                            onclick="loadDashboard()">
+                        ↻ Refresh Data
+                    </button>
+
+                    <button class="btn-primary"
+                            onclick="window.location.href='/export/csv'">
+                        ↓ Export Report
+                    </button>
+                </div>
+
+            </section>
+
+
+            <!-- BUDGET ALERT -->
+            <section class="alert-section">
+                <div class="alert-symbol">◈</div>
+
+                <div class="alert-content">
+                    <strong>Budget Monitoring</strong>
+                    <div id="alertBox">
+                        Checking budget status...
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- KPI SECTION -->
+            <section class="section-block">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Financial Summary</h2>
+                        <p>Your current cloud spending at a glance.</p>
+                    </div>
+
+                    <span class="live-label">
+                        <span class="status-dot"></span>
+                        LIVE DASHBOARD
+                    </span>
+                </div>
+
+
+                <div class="cards">
+
+                    <!-- MONTHLY BUDGET -->
+                    <article class="card budget-card">
+
+                        <div class="metric-top">
+                            <span class="metric-label">MONTHLY BUDGET</span>
+                            <span class="metric-icon blue-icon">◎</span>
+                        </div>
+
+                        <h2 id="budget">₹0</h2>
+
+                        <div class="budget-form">
+                            <input
+                                type="number"
+                                id="budgetInput"
+                                placeholder="Enter budget (₹)"
+                                min="1"
+                                step="1"
+                            >
+
+                            <button onclick="updateBudget()">
+                                Set Budget
+                            </button>
+                        </div>
+
+                        <p id="budgetMessage"></p>
+
+                    </article>
+
+
+                    <!-- TOTAL SPENDING -->
+                    <article class="card">
+
+                        <div class="metric-top">
+                            <span class="metric-label">TOTAL SPENDING</span>
+                            <span class="metric-icon purple-icon">↗</span>
+                        </div>
+
+                        <h2 id="spending">₹0</h2>
+
+                        <p class="metric-description">
+                            Recorded cloud expenses
+                        </p>
+
+                        <div class="metric-bottom">
+                            <span class="metric-indicator">●</span>
+                            Spending overview
+                        </div>
+
+                    </article>
+
+
+                    <!-- REMAINING BUDGET -->
+                    <article class="card">
+
+                        <div class="metric-top">
+                            <span class="metric-label">REMAINING BUDGET</span>
+                            <span class="metric-icon green-icon">✓</span>
+                        </div>
+
+                        <h2 id="remaining">₹0</h2>
+
+                        <p class="metric-description">
+                            Budget available to spend
+                        </p>
+
+                        <div class="metric-bottom">
+                            Available budget
+                        </div>
+
+                    </article>
+
+
+                    <!-- BUDGET USED -->
+                    <article class="card">
+
+                        <div class="metric-top">
+                            <span class="metric-label">BUDGET UTILIZATION</span>
+                            <span class="metric-icon orange-icon">◴</span>
+                        </div>
+
+                        <h2 id="percentage">0%</h2>
+
+                        <p class="metric-description">
+                            Portion of budget consumed
+                        </p>
+
+                        <div class="metric-bottom">
+                            Usage indicator
+                        </div>
+
+                    </article>
+
+
+                    <!-- EXPENSE COUNT -->
+                    <article class="card">
+
+                        <div class="metric-top">
+                            <span class="metric-label">EXPENSE RECORDS</span>
+                            <span class="metric-icon cyan-icon">▤</span>
+                        </div>
+
+                        <h2 id="count">0</h2>
+
+                        <p class="metric-description">
+                            Total recorded transactions
+                        </p>
+
+                        <div class="metric-bottom">
+                            Expense activity
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- COST ANALYTICS -->
+            <section class="section-block" id="analytics">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Cost Analytics</h2>
+                        <p>Explore your cloud spending patterns.</p>
+                    </div>
+                </div>
+
+                <div class="charts">
+
+                    <article class="panel">
+                        <div class="panel-heading">
+                            <div>
+                                <h3>Spending by Service</h3>
+                                <p>Cost distribution across services</p>
+                            </div>
+                            <span class="panel-icon">◫</span>
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="serviceChart"></canvas>
+                        </div>
+                    </article>
+
+
+                    <article class="panel">
+                        <div class="panel-heading">
+                            <div>
+                                <h3>Budget Utilization</h3>
+                                <p>Spending against your budget</p>
+                            </div>
+                            <span class="panel-icon">◴</span>
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="budgetChart"></canvas>
+                        </div>
+                    </article>
+
+
+                    <article class="panel wide-panel">
+                        <div class="panel-heading">
+                            <div>
+                                <h3>Daily Spending Trend</h3>
+                                <p>Understand daily cost variations</p>
+                            </div>
+                            <span class="panel-icon">↗</span>
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="dailyChart"></canvas>
+                        </div>
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- MONTHLY ANALYSIS -->
+            <section class="section-block" id="monthly">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Monthly Spending</h2>
+                        <p>Track your spending across different months.</p>
+                    </div>
+                </div>
+
+                <article class="panel">
+
+                    <div class="panel-heading">
+                        <div>
+                            <h3>Monthly Cost Trend</h3>
+                            <p>Historical monthly expenditure</p>
+                        </div>
+                    </div>
+
+                    <div class="chart-container monthly-chart-container">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+
+                    <div class="table-heading">
+                        <h3>Monthly Breakdown</h3>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Total Spending</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="monthlyTable">
+                                <tr>
+                                    <td colspan="2">
+                                        Loading monthly spending...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- DAILY ANALYSIS -->
+            <section class="section-block" id="daily">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Daily Spending</h2>
+                        <p>Review daily expenditure records.</p>
+                    </div>
+                </div>
+
+                <article class="panel">
+
+                    <div class="panel-heading">
+                        <div>
+                            <h3>Daily Breakdown</h3>
+                            <p>Recorded spending by date</p>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Daily Spending</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="dailyTable">
+                                <tr>
+                                    <td colspan="2">
+                                        Loading daily spending...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- EXPENSE HISTORY -->
+            <section class="section-block" id="expenses">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Expense History</h2>
+                        <p>Review your recorded cloud expense transactions.</p>
+                    </div>
+                </div>
+
+                <article class="panel">
+
+                    <div class="expense-toolbar">
+
+                        <div>
+                            <h3>Cloud Expense Records</h3>
+                            <p>Filter records by cloud service.</p>
+                        </div>
+
+                        <select id="serviceFilter"
+                                onchange="renderExpenses()">
+                            <option value="all">All Services</option>
+                        </select>
+
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Service</th>
+                                    <th>Cost</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="expenseTable"></tbody>
+                        </table>
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- FOOTER -->
+            <footer class="dashboard-footer">
+                <div>
+                    <strong>CloudPulse</strong>
+                    <span>Cost Monitoring &amp; Budget Alert System</span>
+                </div>
+
+                <small>
+                    Demo environment · Simulated cloud billing data
+                </small>
+            </footer>
+
+        </main>
+
+    </div>
+
+</div>
+
+</body>
+</html>
